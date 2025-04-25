@@ -29,24 +29,35 @@ const Index = () => {
 
   return (
     <div className="flex h-screen bg-white">
+      {/* Left Sidebar - Chat History */}
       <Sidebar messages={messages} />
-      <div className="flex-1 flex flex-col">
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-xl font-semibold mb-4">Your Memories (4)</h2>
-            <div className="space-y-4">
-              {[0.23, 0.37, 0.32, 0.30].map((score, index) => (
-                <MemoryCard
-                  key={index}
-                  score={score}
-                  index={index + 1}
-                  content={messages[index % messages.length]}
-                />
-              ))}
-            </div>
+      
+      {/* Middle - Chat Area */}
+      <div className="flex-1 flex flex-col border-r border-gray-200">
+        <div className="p-4 border-b border-gray-200">
+          <h2 className="text-xl font-semibold">Chat</h2>
+        </div>
+        <MessageList />
+        <MessageInput />
+      </div>
+
+      {/* Right Sidebar - Memories */}
+      <div className="w-96 flex flex-col">
+        <div className="p-4 border-b border-gray-200">
+          <h2 className="text-xl font-semibold">Your Memories (4)</h2>
+        </div>
+        <div className="flex-1 overflow-y-auto p-4">
+          <div className="space-y-4">
+            {[0.23, 0.37, 0.32, 0.30].map((score, index) => (
+              <MemoryCard
+                key={index}
+                score={score}
+                index={index + 1}
+                content={messages[index % messages.length]}
+              />
+            ))}
           </div>
         </div>
-        <MessageInput />
       </div>
     </div>
   );
