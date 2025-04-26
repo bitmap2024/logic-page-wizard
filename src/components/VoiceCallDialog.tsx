@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { X, Settings, Mic } from 'lucide-react';
 
@@ -10,6 +9,39 @@ interface VoiceCallDialogProps {
 }
 
 export const VoiceCallDialog = ({ isOpen, onClose, isListening }: VoiceCallDialogProps) => {
+  const [seconds, setSeconds] = useState(0);
+  const maxDuration = 180; // 3 minutes in seconds
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    
+    if (isOpen) {
+      setSeconds(0);
+      intervalId = setInterval(() => {
+        setSeconds(prev => {
+          if (prev >= maxDuration) {
+            clearInterval(intervalId);
+            return maxDuration;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+      setSeconds(0);
+    };
+  }, [isOpen]);
+
+  const formatTime = (timeInSeconds: number) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent 
@@ -18,7 +50,7 @@ export const VoiceCallDialog = ({ isOpen, onClose, isListening }: VoiceCallDialo
       >
         {/* Timer */}
         <div className="absolute top-4 left-0 right-0 text-center text-white text-sm">
-          00:03 / 03:00
+          {formatTime(seconds)} / {formatTime(maxDuration)}
         </div>
 
         {/* Pink Circle */}
